@@ -13,20 +13,15 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
-import MenuItem from "@mui/material/MenuItem";
+import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import FormHelperText from '@mui/material/FormHelperText';
+import Select from "@material-ui/core/Select";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 
-//Dev mode
-const serverURL = ""; //enable for dev mode
 
 //Deployment mode instructions
-//const serverURL = "http://ov-research-4.uwaterloo.ca:PORT"; //enable for deployed mode; Change PORT to the port number given to you;
+const serverURL = "http://ov-research-4.uwaterloo.ca:3001"; //enable for deployed mode; Change PORT to the port number given to you;
 //To find your port number:
 //ssh to ov-research-4.uwaterloo.ca and run the following command:
 //env | grep "PORT"
@@ -116,7 +111,7 @@ class Home extends Component {
     });
   }
 
-  /*callApiLoadUserSettings = async () => {
+  callApiLoadUserSettings = async () => {
     const url = serverURL + "/api/loadUserSettings";
 
     const response = await fetch(url, {
@@ -133,7 +128,7 @@ class Home extends Component {
     if (response.status !== 200) throw Error(body.message);
     console.log("User settings: ", body);
     return body;
-  }*/
+  }
 
   render() {
     const { classes } = this.props;
@@ -160,28 +155,8 @@ const movies = [
 ];
 
 const Review = () => {
-  const initialReviews = [
-    {
-      movie: "Turning Red",
-      title: "First Pixar movie I've disliked",
-      review:
-        "I'm normally a huge fan of Pixar. There hasn't ever been one that I haven't enjoyed. The movie did not feel like Pixar, it felt like I was watching anime with CGI. The animation felt like a mix of Disney and cartoon network, and it lacked the magic that makes Pixar films special. There were a few spots that made me laugh and that I found endearing, but overall I wish I could have gotten my time back.",
-      rating: "2",
-    },
-    {
-      movie: "Encanto",
-      title: "Magical, but not quite enchanting as it could have been",
-      review:
-        "Encanto is a creative movie featuring beautiful and vibrant animation. However, the story feels a little underdeveloped. While there are some magical and emotional moments, it seems as if they didn't know how to end the movie. The lack of a strong villain also makes this movie a little less compelling. Nevertheless, the music is fun, and we enjoyed watching Encanto together as a family.",
-      rating: "4",
-    },
-  ];
 
-  const [movieReviews, setMovieReviews] = React.useState(initialReviews);
-
-  React.useEffect(() => {
-    localStorage.setItem("reviews", JSON.stringify(movieReviews));
-  }, [movieReviews]);
+  const [movieReviews, setMovieReviews] = React.useState([]);
 
   //States for movie, title, review, and rating
   const [selectedMovie, setSelectedMovie] = React.useState("");
@@ -191,53 +166,56 @@ const Review = () => {
 
   const handleMovieSelection = (event) => {
     setSelectedMovie(event.target.value);
-    setMovieError("");
+    setMovieError(false);
+    setSuccessMsg(false);
   };
 
   const handleEnteredTitle = (event) => {
     setTitle(event.target.value);
-    setTitleError("");
+    setTitleError(false);
+    setSuccessMsg(false);
   };
 
   const handleEnteredReview = (event) => {
     setReview(event.target.value);
-    setReviewError("");
+    setReviewError(false);
+    setSuccessMsg(false);
   };
 
   const handleSelectedRating = (event) => {
     setRating(event.target.value);
-    setRatingError("");
+    setRatingError(false);
+    setSuccessMsg(false);
   };
 
   //States for error messages and success message
-  const [movieError, setMovieError] = React.useState("");
-  const [titleError, setTitleError] = React.useState("");
-  const [reviewError, setReviewError] = React.useState("");
-  const [ratingError, setRatingError] = React.useState("");
-  const [successMsg, setSuccessMsg] = React.useState("");
+  const [movieError, setMovieError] = React.useState(false);
+  const [titleError, setTitleError] = React.useState(false);
+  const [reviewError, setReviewError] = React.useState(false);
+  const [ratingError, setRatingError] = React.useState(false);
+  const [successMsg, setSuccessMsg] = React.useState(false);
 
   // Checks for valid inputs and submits new review
   const handleReviewSubmit = (event) => {
-    event.preventDefault();
-    let error = false;
+    let caughtError = false;
     if (selectedMovie === "") {
-      setMovieError("Please select a movie");
-      error = true;
+      setMovieError(true);
+      caughtError = true;
     }
     if (enteredTitle === "") {
-      setTitleError("Please enter a title for the review");
-      error = true;
+      setTitleError(true);
+      caughtError = true;
     }
     if (enteredReview === "") {
-      setReviewError("Please enter a review");
-      error = true;
+      setReviewError(true);
+      caughtError = true;
     }
     if (selectedRating === "") {
-      setRatingError("Please select a rating");
-      error = true;
+      setRatingError(true);
+      caughtError = true;
     }
 
-    if (error === false) {
+    if (!caughtError) {
       let review = {
         movie: selectedMovie,
         title: enteredTitle,
@@ -246,13 +224,17 @@ const Review = () => {
       };
 
       setMovieReviews([...movieReviews, review]);
-      setSuccessMsg("Your review has been received.");
+      setSuccessMsg(true);
+
+      //Reset all inputs
       setSelectedMovie("");
       setTitle("");
       setReview("");
       setRating("");
     }
   };
+
+  console.log(movieReviews.length)
 
   return (
     <Grid
@@ -272,20 +254,44 @@ const Review = () => {
         xl={6}
         lg={6}
       >
-        <Box pt={3} pl={3}>
+        <Box pt={3} pl={5}>
           <Typography variant={"h3"}>
             <>Review a Movie</>
           </Typography>
-          {movieError}
+          {movieError ? (
+            <Typography style={{ color: "rgb(255,0,0)" }} variant={"body2"}>
+              Please select a movie
+            </Typography>
+          ) : (
+            ""
+          )}
           <MovieSelection
             value={selectedMovie}
             onChange={handleMovieSelection}
           />
-          {titleError}
+          {titleError ? (
+            <Typography style={{ color: "rgb(255,0,0)" }} variant={"body2"}>
+              Please enter a title for the review
+            </Typography>
+          ) : (
+            ""
+          )}
           <ReviewTitle value={enteredTitle} onChange={handleEnteredTitle} />
-          {reviewError}
+          {reviewError ? (
+            <Typography style={{ color: "rgb(255,0,0)" }} variant={"body2"}>
+              Please enter a review
+            </Typography>
+          ) : (
+            ""
+          )}
           <ReviewBody value={enteredReview} onChange={handleEnteredReview} />
-          {ratingError}
+          {ratingError ? (
+            <Typography style={{ color: "rgb(255,0,0)" }} variant={"body2"}>
+              Please select a rating
+            </Typography>
+          ) : (
+            ""
+          )}
           <ReviewRating
             value={selectedRating}
             onChange={handleSelectedRating}
@@ -300,7 +306,15 @@ const Review = () => {
               <b>Submit</b>
             </Button>
           </Box>
-          {successMsg}
+          {successMsg ? (
+            <Box pt={3}>
+              <Typography style={{ color: "#33FF33" }} variant={"body2"}>
+                Your review has been received!
+              </Typography>
+            </Box>
+          ) : (
+            ""
+          )}
         </Box>
       </Grid>
       <Grid
@@ -313,15 +327,16 @@ const Review = () => {
         xl={6}
         lg={6}
       >
-        <Box pt={3} pl={3}>
+      {movieReviews.length > 0 ? (<>
+        <Box pt={3} pl={4} pr={4}>
           <Typography variant={"h3"}>
             <>Submitted Reviews</>
           </Typography>
         </Box>
-        <Box>
+        <Box pl={2} pr={5}>
           {movieReviews.map((review) => (
             <Box pt={1} pb={2} pl={2}>
-              <Card sx={{ maxWidth: 500 }}>
+              <Card style={{backgroundColor:"white"}} sx={{ maxWidth: 500 }}>
                 <CardContent>
                   <Typography
                     sx={{ fontSize: 14 }}
@@ -330,20 +345,21 @@ const Review = () => {
                   >
                     {review.movie}
                   </Typography>
-                  <Typography variant="h5" component="div">
+                  <Typography variant="h5" style={{color:"black"}}>
                     {review.title}
                   </Typography>
                   <br />
-                  <Typography variant="body2">{review.review}</Typography>
+                  <Typography style={{color:"black"}} variant="body2">{review.review}</Typography>
                   <br />
-                  <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                  <Typography sx={{ mb: 1.5 }} style={{color:"black"}}>
                     <b>Overall Rating:</b> {review.rating}/5
                   </Typography>
                 </CardContent>
               </Card>
             </Box>
           ))}
-        </Box>
+        </Box></>)
+        : ""}
       </Grid>
     </Grid>
   );
