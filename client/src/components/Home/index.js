@@ -21,11 +21,7 @@ import CardContent from "@material-ui/core/CardContent";
 
 
 //Deployment mode instructions
-const serverURL = "http://ov-research-4.uwaterloo.ca:3001"; //enable for deployed mode; Change PORT to the port number given to you;
-//To find your port number:
-//ssh to ov-research-4.uwaterloo.ca and run the following command:
-//env | grep "PORT"
-//copy the number only and paste it in the serverURL in place of PORT, e.g.: const serverURL = "http://ov-research-4.uwaterloo.ca:3000";
+const serverURL = "ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3001"; //enable for deployed mode; 
 
 //const fetch = require("node-fetch");
 
@@ -106,10 +102,10 @@ class Home extends Component {
     this.callApiLoadUserSettings().then((res) => {
       //console.log("loadUserSettings returned: ", res)
       var parsed = JSON.parse(res.express);
-      console.log("loadUserSettings parsed: ", parsed[0].mode);
+      //console.log("loadUserSettings parsed: ", parsed[0].mode);
       this.setState({ mode: parsed[0].mode });
     });
-  }
+  };
 
   callApiLoadUserSettings = async () => {
     const url = serverURL + "/api/loadUserSettings";
@@ -126,9 +122,9 @@ class Home extends Component {
     });
     const body = await response.json();
     if (response.status !== 200) throw Error(body.message);
-    console.log("User settings: ", body);
+    //console.log("User settings: ", body);
     return body;
-  }
+  };
 
   render() {
     const { classes } = this.props;
@@ -146,16 +142,10 @@ class Home extends Component {
   }
 }
 
-const movies = [
-  "Raya and the Last Dragon",
-  "Encanto",
-  "Turning Red",
-  "Soul",
-  "Luca",
-];
-
 const Review = () => {
 
+  const [movies, setMovies] = React.useState("");
+  const [userID, setUserID] = React.useState(1);  
   const [movieReviews, setMovieReviews] = React.useState([]);
 
   //States for movie, title, review, and rating
@@ -163,6 +153,32 @@ const Review = () => {
   const [enteredTitle, setTitle] = React.useState("");
   const [enteredReview, setReview] = React.useState("");
   const [selectedRating, setRating] = React.useState("");
+
+  React.useEffect(() => {
+    getMovies();
+  }, []);
+
+  const getMovies = () => {
+    callApiGetMovies()
+      .then(res => {
+        var parsed = JSON.parse(res.express);
+        setMovies(parsed);
+    })
+  };
+
+  const callApiGetMovies = async () => {
+    const url = serverURL + "/api/getMovies";
+
+    const response = await fetch(url, {
+      method:"POST",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    const body = await response.json()
+    if (response.status !== 200) throw Error(body.message);
+    return body;
+  };
 
   const handleMovieSelection = (event) => {
     setSelectedMovie(event.target.value);
@@ -223,8 +239,9 @@ const Review = () => {
         rating: selectedRating,
       };
 
-      setMovieReviews([...movieReviews, review]);
       setSuccessMsg(true);
+      setMovieReviews([...movieReviews, review]);
+      addReview();
 
       //Reset all inputs
       setSelectedMovie("");
@@ -234,7 +251,33 @@ const Review = () => {
     }
   };
 
-  console.log(movieReviews.length)
+  const addReview = () => {
+    callApiAddReview()
+      .then(res => {
+        var parsed = JSON.parse(res.express);     
+    })
+  }
+
+  const callApiAddReview = async () => {
+    const url = serverURL + "/api/addReview";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: enteredTitle,
+        review: enteredReview,
+        rating: selectedRating,
+        userID: userID,
+        movie: selectedMovie,
+      }),
+    });
+    const body = await response.json();
+    if (response.status !== 200) throw Error(body.message);
+    return body;
+  };
 
   return (
     <Grid
@@ -266,6 +309,7 @@ const Review = () => {
             ""
           )}
           <MovieSelection
+            movieList={movies}
             value={selectedMovie}
             onChange={handleMovieSelection}
           />
@@ -380,9 +424,9 @@ const MovieSelection = (props) => (
         <MenuItem value="" disabled>
           Select a Movie
         </MenuItem>
-        {movies.map((movie) => (
-          <MenuItem key={movie.id} value={movie}>
-            {movie}
+        {Object.values(props.movieList).map((value, index) => (
+          <MenuItem key={value.id} value={value.name}>
+            {value.name}
           </MenuItem>
         ))}
       </Select>

@@ -36,7 +36,70 @@ app.post('/api/loadUserSettings', (req, res) => {
 	connection.end();
 });
 
+app.post('/api/getMovies', (req, res) => {
+	let connection = mysql.createConnection(config);
+
+	let sql = `SELECT * FROM movies`;
+	let data = [];
+	connection.query(sql, data,(error, results, fields) => {
+		if (error) {
+			return console.error('error: ' + error.message);
+		}
+		let string = JSON.stringify(results);
+		let obj = JSON.parse(string);
+		res.send({ express: string });
+	});
+	connection.end();
+});
+
+app.post('/api/addReview', (req, res) => {
+	let connection = mysql.createConnection(config);
+	let data = req.body;
+	var errorsInTransaction = 0;
+
+	connection.query(`START TRANSACTION`, data, (error, results, fields) => {
+		if (error) {
+			console.log(error.message);
+			errorsInTransaction = errorsInTransaction + 1;
+		};
+		let findMovieID = `SELECT id FROM movies where name = ?;`;
+		let movieData = data.movie;
+
+		connection.query(findMovieID, movieData, (error, results, fields) => {
+			if (error) {
+				console.log(error.message);
+				errorsInTransaction = errorsInTransaction + 1;
+			};
+			let string = JSON.stringify(results);
+			let obj = JSON.parse(string);
+
+			let insertReview = `INSERT INTO review (reviewTitle, reviewContent, reviewScore, user_userID, movies_id) VALUES (?,?,?,?,?);`;
+			let reviewData = [data.title, data.review, data.rating, data.userID, obj[0].id];
+
+			connection.query(insertReview, reviewData, (error, results, fields) => {
+				if (error) {
+				console.log(error.message);
+				errorsInTransaction = errorsInTransaction + 1;
+				};
+				
+				if (errorsInTransaction > 0) {
+					connection.query(`ROLLBACK`, dataEmpty, (error, results, fields) => {
+						let string = JSON.stringify('Error')
+						res.send({ express: string });
+						connection.end();
+					});
+				} else {
+					connection.query(`COMMIT`, data, (error, results, fields) => {
+						let string = JSON.stringify('Success')
+						res.send({ express: string });
+						connection.end();
+					})
+				};
+			});
+		});
+	});
+});
 
 
-app.listen(port, () => console.log(`Listening on port ${port}`)); //for the dev version
-//app.listen(port, '129.97.25.211'); //for the deployed version, specify the IP address of the server
+//app.listen(port, () => console.log(`Listening on port ${port}`)); //for the dev version
+app.listen(port, '172.31.31.77'); //for the deployed version, specify the IP address of the server
