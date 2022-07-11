@@ -41,12 +41,13 @@ app.post('/api/getMovies', (req, res) => {
 
 	let sql = `SELECT * FROM movies`;
 	let data = [];
+
 	connection.query(sql, data,(error, results, fields) => {
 		if (error) {
 			return console.error('error: ' + error.message);
 		}
+		
 		let string = JSON.stringify(results);
-		let obj = JSON.parse(string);
 		res.send({ express: string });
 	});
 	connection.end();
