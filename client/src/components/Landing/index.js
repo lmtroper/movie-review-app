@@ -1,36 +1,61 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import TextField from "@material-ui/core/TextField";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
-import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
-import Select from "@material-ui/core/Select";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import NavBar from '../Navigation/index';
+import background from '../../images/27112807_gr-stocks-q8P8YoR6erg-unsplash.jpeg';
 
 const Landing = () => {
     
     return (
+        <>
+        <NavBar 
+            pages={[['Search','search'], ['Reviews','reviews'], ['Movie Trailers','movieTrailers']]} />
         <Grid
         container
         direction="row"
-        justifyContent="flex-start"
         ml={5}
-        style={{ minHeight: "100", marginBottom:'100px' }}>
-            <NavBar />
+        style={{ minHeight: "91vh", backgroundImage: `url(${background})`, backgroundPosition: 'center', backgroundSize: 'cover', filter: 'opacity(80%)'}}>
+            <Box
+            style={{maxWidth:"60%", margin:'70px 0 0 30px'}}
+            >
+                <Typography variant={'h4'} style={{color:'rgb(2,45,80)'}}>
+                    <b>Welcome to My Movie Review Site</b>
+                </Typography>
+                <Typography variant={'h6'} style={{maxWidth:'75%', marginBottom:'20px'}}>
+                    Review your favourite movies and see what others are saying about them.
+                </Typography>
+                <div>
+                    <Button
+                    variant="contained"
+                    href='reviews'
+                    style={{marginBottom:'20px'}}>
+                        START WRITING A REVIEW
+                    </Button>
+                </div>
+                <div>
+                <Button
+                variant="contained"
+                href='search'
+                style={{marginBottom:'70px'}}>
+                    SEE WHAT OTHERS ARE SAYING
+                </Button>
+                </div>
+                <Typography variant={'h5'} style={{maxWidth:'80%', marginBottom:'10px'}}>
+                    <b>Need a movie to watch?</b>
+                </Typography>
+                <Typography variant={'h6'} style={{maxWidth:'80%', marginBottom:'20px'}}>
+                    Check out some of the available trailers!
+                </Typography>
+                <Button
+                href='/movieTrailers'
+                variant="contained">
+                   MOVIE TRAILERS
+                </Button>
+            </Box>
         </Grid>
+        </>
     )
 
 }

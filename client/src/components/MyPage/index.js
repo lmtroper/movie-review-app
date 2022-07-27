@@ -71,7 +71,8 @@ const MyPage = () => {
         justifyContent="flex-start"
         ml={5}
         style={{ minHeight: "100%", marginBottom:'100px' }}>
-            <NavBar />
+            <NavBar 
+            pages = {[['Home','/'], ['Search','search'], ['Reviews','reviews']]} />
             <Grid
             container
             direction="row"

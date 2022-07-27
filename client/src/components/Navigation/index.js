@@ -8,13 +8,13 @@ import Typography from "@material-ui/core/Typography";
 
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
-//import MenuIcon from '@material-ui/icons-material/Menu';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import MenuItem from '@material-ui/core/MenuItem';
-//import AdbIcon from '@material-ui/core/Adb';
+import MovieIcon from '@mui/icons-material/Movie';
+import history from '/';
 
 import SignOutButton from '../SignOut';
 import * as ROUTES from '../../constants/routes';
@@ -51,33 +51,19 @@ const NavigationNonAuth = () => (
   </ul>
 );
 
-const pages = ['Landing', 'Search', 'Reviews', 'MyPage'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const NavBar = ({pages}) => {
 
-const NavBar = () => {
   return (
     <AppBar position="static" style={{ background: '#003F87' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="medium"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              color="inherit"
-            >
-            </IconButton>
-            <Menu
+          <Box>
+              <Menu
               id="menu-appbar"
               keepMounted
               transformOrigin={{
                 vertical: 'top',
                 horizontal: 'left',
-              }}
-  
-              sx={{
-                display: { xs: 'block', md: 'none' },
               }}
             >
               {pages.map((page) => (
@@ -94,7 +80,6 @@ const NavBar = () => {
             href=""
             sx={{
               mr: 2,
-              display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
               fontFamily: 'monospace',
               fontWeight: 700,
@@ -105,15 +90,15 @@ const NavBar = () => {
           >
             
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box>
             {pages.map((page) => (
               <Button
                 style={{ color:'white' }}
                 key={page}
-                href={page}
+                href={page[1]}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                {page[0]}
               </Button>
             ))}
           </Box>
@@ -132,11 +117,11 @@ const NavBar = () => {
                 horizontal: 'right',
               }}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting}>
-                  <Typography textalign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              
+
+
+
+
             </Menu>
           </Box>
         </Toolbar>
@@ -145,3 +130,9 @@ const NavBar = () => {
   );
 };
 export default NavBar;
+
+//{settings.map((setting) => (
+  //              <MenuItem key={setting}>
+    //              <Typography textalign="center">{setting}</Typography>
+      //          </MenuItem>
+        //      ))} #}

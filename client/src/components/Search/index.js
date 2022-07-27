@@ -4,7 +4,6 @@ import Typography from "@material-ui/core/Typography";
 import AppBar from '@mui/material/AppBar';
 import Box from '@material-ui/core/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Link from '@material-ui/core/Link';
 import history from '../Navigation/history';
 import NavBar from '../Navigation/index';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -122,7 +121,8 @@ const SearchReview = () => {
       justifyContent="flex-start"
       ml={5}
       style={{ minHeight: "100", marginBottom:'100px' }}>
-        <NavBar />
+        <NavBar 
+          pages={[['Home','/'], ['Reviews','reviews'], ['Movie Trailers','movieTrailers']]}/>
         <Grid
           item
           container
