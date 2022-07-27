@@ -51,7 +51,7 @@ const NavigationNonAuth = () => (
   </ul>
 );
 
-const pages = ['Home', 'Search', 'Reviews', 'MyPage'];
+const pages = ['Landing', 'Search', 'Reviews', 'MyPage'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const NavBar = () => {

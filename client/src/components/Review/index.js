@@ -166,8 +166,8 @@ const Review = () => {
       container
       direction="row"
       justifyContent="flex-start"
-      pl={5}
-      style={{ minHeight: "100%", marginBottom:'100px' }}
+      ml={5}
+      style={{ minHeight: "100", marginBottom:'100px'}}
     >
     <NavBar />
       <Grid
@@ -225,17 +225,17 @@ const Review = () => {
           />
           <Box mr={3}>
             <Button
-              //color="#2C3333"
+              color="primary"
               variant="contained"
-              style={{ minWidth: 175, backgroundColor:"#2C3333", color:'white' }}
+              style={{ minWidth: 175, fontWeight:'400'}}
               onClick={handleReviewSubmit}
             >
-              <b>Submit</b>
+              Submit
             </Button>
           </Box>
           {successMsg ? (
-            <Box mt={3} textAlign="center">
-              <Typography style={{ maxWidth:'40%', padding:'5px', color: "black", fontSize:"12pt" , backgroundColor:"rgba(50, 205, 50, 0.35)", borderRadius:"5px"}} >
+            <Box pt={3}>
+              <Typography style={{ color: "#33FF33" }} variant={"body2"}>
                 Your review has been received!
               </Typography>
             </Box>
@@ -256,19 +256,19 @@ const Review = () => {
       >
       {movieReviews.length > 0 ? (<>
         <Box pt={3} pl={4} pr={4}>
-          <Typography variant={"h3"} style={{fontWeight:'200'}}>
+          <Typography variant={"h3"}>
             <>Submitted Reviews</>
           </Typography>
         </Box>
         <Box pl={2} pr={5}>
           {movieReviews.map((review) => (
             <Box pt={1} pb={2} pl={2}>
-              <Card style={{backgroundColor:"#EBF5FB"}} sx={{ maxWidth: 500 }}>
+              <Card style={{backgroundColor:"white"}} sx={{ maxWidth: 500 }}>
                 <CardContent>
                   <Typography
                     sx={{ fontSize: 14 }}
+                    color="secondary"
                     gutterBottom
-                    style={{color:'#003F87', fontSize:'16pt', fontWeight:'500'}}
                   >
                     {review.movie}
                   </Typography>
@@ -341,7 +341,7 @@ const ReviewBody = (props) => {
         style={{ minWidth: 400 }}
         label="Enter a Movie Review"
         multiline
-        minRows={7}
+        minRows={8}
         variant="outlined"
         value={props.value}
         onChange={props.onChange}

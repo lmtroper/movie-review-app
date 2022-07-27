@@ -46,7 +46,6 @@ app.post('/api/getMovies', (req, res) => {
         if (error) {
             return console.error('error: ' + error.message);
         }
-
         let string = JSON.stringify(results);
         res.send({ express: string });
     });
@@ -84,6 +83,25 @@ app.post('/api/searchMovies', (req, res) => {
     });
     connection.end();
 });
+
+app.post('/api/getTrailers', (req, res) => {
+    let connection = mysql.createConnection(config);
+
+    let sql = `select link, movies.name from trailer, movies 
+    where trailer.movies_id=movies.id and movies.name LIKE ? order by movies.name;`
+    let data = [req.body.movie + '%'];
+
+    connection.query(sql, data, (error, results, fields) => {
+        if (error) {
+            return console.error('error: ' + error.message);
+        }
+        console.log(results);
+        let string = JSON.stringify(results);
+        res.send({ express: string });
+    });
+    connection.end();
+});
+
 
 app.post('/api/addReview', (req, res) => {
     let connection = mysql.createConnection(config);
