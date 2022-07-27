@@ -6,7 +6,7 @@ import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 
 //Deployment mode instructions
-const serverURL = "";//"http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3001"; //enable for deployed mode; 
+const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3001"; //enable for deployed mode; 
 
 //const fetch = require("node-fetch");
 

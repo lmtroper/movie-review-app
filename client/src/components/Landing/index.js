@@ -1,17 +1,16 @@
-import React, { Component } from "react";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import NavBar from '../Navigation/index';
+import { Link } from 'react-router-dom';
 import background from '../../images/27112807_gr-stocks-q8P8YoR6erg-unsplash.jpeg';
 
 const Landing = () => {
-    
     return (
         <>
-        <NavBar 
-            pages={[['Search','search'], ['Reviews','reviews'], ['Movie Trailers','movieTrailers']]} />
+        <NavBar pages = {[['Search', 'search'],['Reviews', 'reviews'],['Movie Trailers', 'movieTrailers']]} />
         <Grid
         container
         direction="row"
@@ -29,29 +28,26 @@ const Landing = () => {
                 <div>
                     <Button
                     variant="contained"
-                    href='reviews'
                     style={{marginBottom:'20px'}}>
-                        START WRITING A REVIEW
+                        <Link to={'/reviews'} style={{textDecoration: 'none'}}>START WRITING A REVIEW</Link>
                     </Button>
                 </div>
                 <div>
                 <Button
                 variant="contained"
-                href='search'
                 style={{marginBottom:'70px'}}>
-                    SEE WHAT OTHERS ARE SAYING
+                    <Link to={'/search'} style={{textDecoration: 'none'}}>SEARCH FOR MOVIE REVIEWS</Link>
                 </Button>
                 </div>
                 <Typography variant={'h5'} style={{maxWidth:'80%', marginBottom:'10px'}}>
                     <b>Need a movie to watch?</b>
                 </Typography>
                 <Typography variant={'h6'} style={{maxWidth:'80%', marginBottom:'20px'}}>
-                    Check out some of the available trailers!
+                    Check out the available movie trailers!
                 </Typography>
                 <Button
-                href='/movieTrailers'
                 variant="contained">
-                   MOVIE TRAILERS
+                    <Link to={'/movieTrailers'} style={{textDecoration: 'none'}}>MOVIE TRAILERS</Link>
                 </Button>
             </Box>
         </Grid>

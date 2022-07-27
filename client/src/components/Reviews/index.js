@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -17,7 +17,7 @@ import NavBar from '../Navigation/index';
 
 
 //Deployment mode instructions
-const serverURL = "";//"http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3001"; //enable for deployed mode; 
+const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3001"; //enable for deployed mode; 
 
 const Review = () => {
 
@@ -116,7 +116,7 @@ const Review = () => {
         rating: selectedRating,
       };
 
-      //addReview();
+      addReview();
       setMovieReviews([...movieReviews, review]);
       setSuccessMsg(true);
 
@@ -164,8 +164,7 @@ const Review = () => {
       pl={5}
       style={{ minHeight: "100%", marginBottom:'100px' }}
     >
-    <NavBar 
-    pages = {[['Home','/'], ['Search','search'], ['Movie Trailers','movieTrailers']]} />
+    <NavBar pages = {[['Landing Page', ''], ['Search', 'search'],['Movie Trailers', 'movieTrailers']]}/>
       <Grid
         item
         container

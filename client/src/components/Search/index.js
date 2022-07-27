@@ -1,19 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import AppBar from '@mui/material/AppBar';
 import Box from '@material-ui/core/Box';
-import Toolbar from '@mui/material/Toolbar';
-import history from '../Navigation/history';
 import NavBar from '../Navigation/index';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
-import IconButton from "@material-ui/core/IconButton";
 import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
 import background from '../../images/le-cinema-1442829.jpeg';
 
-const serverURL = "";
+const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3001"; //enable for deployed mode; 
 
 const SearchReview = () => {
 
@@ -24,7 +19,7 @@ const SearchReview = () => {
   const [directorSearchTerm, setDirectorSearchTerm] = React.useState("");
 
   const handleReviewSearch = () => {
-    if (movieSearchTerm != '' || actorSearchTerm != '' || directorSearchTerm != ''){
+    if (movieSearchTerm !== '' || actorSearchTerm !== '' || directorSearchTerm !== ''){
       callApiSearchMovies()
         .then(res => {
           var parsed = JSON.parse(res.express);
@@ -41,14 +36,15 @@ const SearchReview = () => {
 
   const groupFilteredMovies = () => {
     let groupedObj = {};
-    //let test = {}
+    
     for (var i=0; i<movieReviews.length; i++){
       let movieID = movieReviews[i].id;
       let data = movieReviews[i];
 
       if (groupedObj.hasOwnProperty(movieID)){
-    
-        if (data.reviewContent != null){
+
+        if ((data.reviewContent !== null ) && (!groupedObj[movieID].review_id.includes(data.reviewID))){
+          groupedObj[movieID].review_id.push(data.reviewID);
           groupedObj[movieID].review.push([data.reviewTitle, data.reviewContent]);
           groupedObj[movieID].score.push(data.reviewScore);
         };
@@ -61,6 +57,7 @@ const SearchReview = () => {
         groupedObj[movieID] = {
           'movie':data.name, 
           'year':data.year,
+          'review_id':[data.reviewID],
           'review':[[data.reviewTitle, data.reviewContent]],
           'score':[data.reviewScore],
           'director':[data.director]
@@ -103,10 +100,6 @@ const SearchReview = () => {
       setDirectorSearchTerm(searchValue);
     };
 
-    const handleSearchButton = (event) => {
-      handleReviewSearch();
-    }
-
     const handleSearchTermReset = (event) => {
       setMovieSearchTerm('');
       setActorSearchTerm('');
@@ -121,8 +114,7 @@ const SearchReview = () => {
       justifyContent="flex-start"
       ml={5}
       style={{ minHeight: "100", marginBottom:'100px' }}>
-        <NavBar 
-          pages={[['Home','/'], ['Reviews','reviews'], ['Movie Trailers','movieTrailers']]}/>
+        <NavBar pages = {[['Landing Page', ''],['Reviews', 'reviews'],['Movie Trailers', 'movieTrailers']]}/>
         <Grid
           item
           container
@@ -269,7 +261,7 @@ const Item = ({list}) => {
               <b> Directed by </b>
               {Object.values(list.director).map((value, index) => (
                 <>
-                {index == (list.director.length-1) ? (
+                {index === (list.director.length-1) ? (
                     <b>{value}</b>
                 ) :
                     <b>{value} & </b>
@@ -281,7 +273,7 @@ const Item = ({list}) => {
             </>) : <b>Directed by {list.director}</b>}
           </Typography>
           <Typography variant='h4' style={{ color:'rgba(0,0,0)', margin:'15pt 0pt 20pt 40pt'}}>
-            { sum != 0 ? (<b>{avgRating}/5</b>) : <b>N/A</b>}
+            { sum !== 0 ? (<b>{avgRating}/5</b>) : <b>N/A</b>}
           </Typography>
         </Grid>
           {reviews ? (<>

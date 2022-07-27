@@ -58,7 +58,7 @@ app.post('/api/searchMovies', (req, res) => {
     actorSearchTerm = req.body.actorSearchTerm + '%';
     directorSearchTerm = req.body.directorSearchTerm + '%';
 
-    let sql = `select filtered.year, filtered.name, filtered.director, filtered.id, reviewContent, reviewTitle, reviewScore from(
+    let sql = `select filtered.year, filtered.name, filtered.director, filtered.id, reviewContent, reviewTitle, reviewScore, reviewID from(
         select distinct movies.id as id, movies.year as year, movies.name as name,
         concat(directors.first_name, ' ', directors.last_name) as director
         from movies, movies_directors, directors, roles , actors
@@ -95,7 +95,7 @@ app.post('/api/getTrailers', (req, res) => {
         if (error) {
             return console.error('error: ' + error.message);
         }
-        console.log(results);
+        //console.log(results);
         let string = JSON.stringify(results);
         res.send({ express: string });
     });
@@ -152,5 +152,5 @@ app.post('/api/addReview', (req, res) => {
 });
 
 
-app.listen(port, () => console.log(`Listening on port ${port}`)); //for the dev version
-//app.listen(port, '172.31.31.77'); //for the deployed version, specify the IP address of the server
+//app.listen(port, () => console.log(`Listening on port ${port}`)); //for the dev version
+app.listen(port, '172.31.31.77'); //for the deployed version, specify the IP address of the server

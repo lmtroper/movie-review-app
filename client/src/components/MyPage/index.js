@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import NavBar from '../Navigation/index';
 
-const serverURL = '';
+const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3001"; //enable for deployed mode; 
 
 const MyPage = () => {
     const [searchTerm, setSearchTerm] = React.useState("");
@@ -15,12 +15,12 @@ const MyPage = () => {
     const [noResultsMsg, setNoResultsMsg] = React.useState('');
 
     const handleTrailerSearch = () => {
-        if (searchTerm != ''){
+        if (searchTerm !== ''){
             callApiGetTrailers()
                 .then(res => {
                 var parsed = JSON.parse(res.express);
                 setTrailers(parsed);
-                if (parsed.length == 0){
+                if (parsed.length === 0){
                     setNoResultsMsg('No Trailers Found')
                 };
                 }); 
@@ -71,8 +71,7 @@ const MyPage = () => {
         justifyContent="flex-start"
         ml={5}
         style={{ minHeight: "100%", marginBottom:'100px' }}>
-            <NavBar 
-            pages = {[['Home','/'], ['Search','search'], ['Reviews','reviews']]} />
+            <NavBar pages = {[['Landing Page', ''], ['Search', 'search'], ['Reviews', 'reviews'] ]}/>
             <Grid
             container
             direction="row"
@@ -95,7 +94,7 @@ const MyPage = () => {
                         12 Angry Men, Batman Begins, Finding Nemo, Forrest Gump, Gone with the Wind, Good Will Hunting, Pirates of
                         the Caribbean: The Curse of the Black Pearl, Saving Private Ryan, Stand By Me, and Toy Story.</b>
                     </Typography>
-                    {errorMsg != '' ? (
+                    {errorMsg !== '' ? (
                         <Typography style={{ margin:'0px 25% 0px', textAlign:'left', color: "rgb(255,0,0)" }} variant={"body2"}>
                             {errorMsg}
                         </Typography>) : ("")
@@ -129,7 +128,7 @@ const MyPage = () => {
             direction='row'
             justifyContent='center'
             style={{margin:'0 100px 0 100px'}}>
-            {(trailers.length > 0 && noResultsMsg =='') ? (<>
+            {(trailers.length > 0 && noResultsMsg === '') ? (<>
                 {Object.values(trailers).map((trailer, index) => (<>
                 <Box textAlign='center' style={{margin:'0 30px 40px 30px'}}>
                     <iframe
