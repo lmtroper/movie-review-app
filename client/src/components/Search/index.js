@@ -26,7 +26,7 @@ const SearchReview = () => {
 
   const handleReviewSearch = () => {
     if (movieSearchTerm != '' || actorSearchTerm != '' || directorSearchTerm != ''){
-      callApiFindReviews()
+      callApiSearchMovies()
         .then(res => {
           var parsed = JSON.parse(res.express);
           setMovieReviews(parsed);
@@ -37,31 +37,45 @@ const SearchReview = () => {
   };
 
   React.useEffect(() => {
-    groupReviewsByMovie();
+    groupFilteredMovies();
   }, [movieReviews]);
 
-  const groupReviewsByMovie = () => {
+  const groupFilteredMovies = () => {
     let groupedObj = {};
+    //let test = {}
     for (var i=0; i<movieReviews.length; i++){
       let movieID = movieReviews[i].id;
       let data = movieReviews[i];
 
       if (groupedObj.hasOwnProperty(movieID)){
-        groupedObj[movieID].push(data);
-      } else {
-        groupedObj[movieID] = [data];
-      };
     
+        if (data.reviewContent != null){
+          groupedObj[movieID].review.push([data.reviewTitle, data.reviewContent]);
+          groupedObj[movieID].score.push(data.reviewScore);
+        };
 
+        if (!groupedObj[movieID].director.includes(data.director)){
+           groupedObj[movieID].director.push(data.director)
+        };
+       
+      } else {
+        groupedObj[movieID] = {
+          'movie':data.name, 
+          'year':data.year,
+          'review':[[data.reviewTitle, data.reviewContent]],
+          'score':[data.reviewScore],
+          'director':[data.director]
+        };
+      };  
     };
-    console.log(groupedObj);
+
     setGroupedReviews(groupedObj);
   };
 
 
-  const callApiFindReviews = async () => {
+  const callApiSearchMovies = async () => {
 
-    const url = serverURL + "/api/findReviews";
+    const url = serverURL + "/api/searchMovies";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -124,9 +138,7 @@ const SearchReview = () => {
           backgroundColor= 'rgba(255,0,0,.6)'
           style={{ backgroundImage: `url(${background})`, backgroundPosition: 'center', backgroundSize: 'cover', filter: 'opacity(80%)'}}
         >
-          <Typography variant={'h3'} style={{textAlign:'center', color:"white", fontWeight:'20pt'}}>
-            Find Movies To Watch Based on Reviews
-          </Typography>
+          
         </Grid>
         <Grid
           item
@@ -139,8 +151,12 @@ const SearchReview = () => {
           lg={7}
           style={{ backgroundColor:'#EBF5F8'}}
         >
+
           <Box pt={3} mb={3} style={{ marginLeft:'10%' }}>
             <div>
+            <Typography variant={'h3'} style={{textAlign:'left', color:"black", fontWeight:'200', marginBottom:'25px'}}>
+            Search for a Movie
+            </Typography>
               <div>
                 <Search
                 label="Search by Movie Title"
@@ -186,9 +202,7 @@ const SearchReview = () => {
         <List reviewList={movieReviews} groupedList={groupedReviews}/> 
       </Grid>
     )
-
-}
-//<List reviewList={movieReviews}/>
+};
 
 const Search = ({ value, label, onSearch, onChange }) => {
 
@@ -220,22 +234,21 @@ const List = ({reviewList, groupedList}) => {
 
 };
 
-const Test = ({value}) => {
-  return(
-    <Typography variant='h4' style={{ marginLeft:'40pt', marginTop:'20pt'}}>
-      <b>{value[0].id}</b>
-    </Typography>
-    );
-}
-// <Item value={value}/>
-
 const Item = ({list}) => {
-  let sum = 0;
-  for (var i=0; i<list.length; i++){
-    sum += list[i].reviewScore
-  }
-  const avgRating = parseFloat((sum/list.length).toFixed(2));
+  let reviews = false;
 
+  if (list.review[0][0] != null){
+    reviews = true;
+  };
+
+  let sum = 0;
+  
+  for (var i=0; i<list.score.length; i++){
+    sum += list.score[i]
+  }
+
+  const avgRating = parseFloat((sum/list.score.length).toFixed(2));
+  
   return (
     <Grid container>
       <Box
@@ -246,30 +259,45 @@ const Item = ({list}) => {
       >
         <Grid item container direction='column' xs={4}>
           <Typography variant='h4' style={{ marginLeft:'40pt', marginTop:'20pt'}}>
-            {list.name > 1 ? (<b>{list[0][0].name}</b>) : (<b>{list[0].name}</b>)}
+            <b>{list.movie}</b>
           </Typography>
           <Typography variant='h6' style={{ color:'rgba(0,0,0,0.3)', marginLeft:'40pt'}}>
-            <b>{list[0].year}</b>
+            <b>{list.year}</b>
           </Typography>
           <Typography variant='h6' style={{ color:'rgba(0,0,0,0.3)', marginLeft:'40pt'}}>
-            <b>Directed by {list[0].director}</b>
+            {list.director.length > 1 ? (<>
+              <b> Directed by </b>
+              {Object.values(list.director).map((value, index) => (
+                <>
+                {index == (list.director.length-1) ? (
+                    <b>{value}</b>
+                ) :
+                    <b>{value} & </b>
+                }
+                </>
+
+              ))}
+              
+            </>) : <b>Directed by {list.director}</b>}
           </Typography>
           <Typography variant='h4' style={{ color:'rgba(0,0,0)', margin:'15pt 0pt 20pt 40pt'}}>
-            <b>{avgRating}/5</b>
+            { sum != 0 ? (<b>{avgRating}/5</b>) : <b>N/A</b>}
           </Typography>
         </Grid>
-        <Grid item container direction='column' xs={8} style={{borderLeft:'1px rgba(0,0,0,0.1) solid'}}>
-          {Object.values(list).map((value, index) => (
-          <>
-            <Typography variant='h6' style={{margin:'3pt auto 0pt auto'}}>
-              <i><b>{value.reviewTitle}</b></i>
-            </Typography>
-            <Typography variant='h6' style={{margin:'0 auto 15pt auto'}}>
-              <i>"{value.reviewContent}"</i>
-            </Typography>
-          </>
-          ))}
-        </Grid>
+          {reviews ? (<>
+            <Grid item container direction='column' xs={8} style={{borderLeft:'1px rgba(0,0,0,0.1) solid', padding:'0 40pt 0 40pt'}}>
+              {Object.values(list.review).map((value, index) => (<>
+                <Typography variant='h6' style={{margin:'3pt auto 0pt auto'}}>
+                  <i><b>{value[0]}</b></i>
+                </Typography>
+                <Typography variant='h6' style={{margin:'0 auto 15pt auto'}}>
+                  <i>{value[1]}</i>
+                </Typography>
+              </>
+              ))}
+          </Grid></> ) : 
+          <Grid item container direction='column' justifyContent='center' alignContent='center' xs={8} style={{borderLeft:'1px rgba(0,0,0,0.1) solid', fontSize:'20pt'}}>
+          <b>No Reviews Yet</b></Grid>}
       </Box>
     </Grid>
   );

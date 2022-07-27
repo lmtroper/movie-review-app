@@ -53,83 +53,27 @@ app.post('/api/getMovies', (req, res) => {
     connection.end();
 });
 
-app.post('/api/findMovies', (req, res) => {
+app.post('/api/searchMovies', (req, res) => {
     let connection = mysql.createConnection(config);
     movieSearchTerm = req.body.movieSearchTerm + '%';
     actorSearchTerm = req.body.actorSearchTerm + '%';
     directorSearchTerm = req.body.directorSearchTerm + '%';
 
-    let sql = `select distinct reviewID, review.movies_id
-        from review, movies, movies_directors, directors, roles , actors
-        WHERE movies.id=review.movies_id 
-        and movies.name LIKE ? and
+    let sql = `select filtered.year, filtered.name, filtered.director, filtered.id, reviewContent, reviewTitle, reviewScore from(
+        select distinct movies.id as id, movies.year as year, movies.name as name,
+        concat(directors.first_name, ' ', directors.last_name) as director
+        from movies, movies_directors, directors, roles , actors
+        WHERE movies.name LIKE ? and
         movies.id = movies_directors.movie_id and 
         movies_directors.director_id = directors.id and
         concat(directors.first_name, ' ', directors.last_name) LIKE ? and 
         movies.id = roles.movie_id and
         actors.id = roles.actor_id and 
-        concat(actors.first_name, ' ', actors.last_name) LIKE ?;`;
+        concat(actors.first_name, ' ', actors.last_name) LIKE ?) as filtered
+        left join review on filtered.id=review.movies_id;`;
 
     data = [movieSearchTerm, directorSearchTerm, actorSearchTerm]
 
-    connection.query(sql, data, (error, results, fields) => {
-        if (error) {
-            return console.error('error: ' + error.message);
-        }
-        console.log(results);
-        let string = JSON.stringify(results);
-        res.send({ express: string });
-    });
-    connection.end();
-});
-
-app.post('/api/findReviewsByMovieID', (req, res) => {
-    let connection = mysql.createConnection(config);
-
-    let sql = `select distinct reviewTitle, reviewContent, reviewScore, movies.id, movies.year, movies.name,
-    concat(directors.first_name, ' ', directors.last_name) as director
-    from review, movies, movies_directors, directors
-    WHERE review.movies_id = ? and
-    movies.id=review.movies_id and
-    movies.id = movies_directors.movie_id and 
-    movies_directors.director_id = directors.id;`;
-    data = [req.body.movieID]
-
-    connection.query(sql, data, (error, results, fields) => {
-        if (error) {
-            return console.error('error: ' + error.message);
-        }
-        console.log(results);
-        let string = JSON.stringify(results);
-        res.send({ express: string });
-    });
-    connection.end();
-});
-
-
-app.post('/api/findReviews', (req, res) => {
-    let connection = mysql.createConnection(config);
-    movieSearchTerm = req.body.movieSearchTerm + '%';
-    actorSearchTerm = req.body.actorSearchTerm + '%';
-    directorSearchTerm = req.body.directorSearchTerm + '%';
-
-    let sql = `select distinct reviewTitle, reviewContent, reviewScore, movies.id, movies.year, movies.name,
-    concat(directors.first_name, ' ', directors.last_name) as director
-    from review, movies, movies_directors, directors, roles , actors
-    WHERE movies.id=review.movies_id 
-    and movies.name LIKE ? and
-    movies.id = movies_directors.movie_id and 
-    movies_directors.director_id = directors.id and
-    concat(directors.first_name, ' ', directors.last_name) LIKE ? and 
-    movies.id = roles.movie_id and
-    actors.id = roles.actor_id and 
-    concat(actors.first_name, ' ', actors.last_name) LIKE ?;`;
-
-    data = [movieSearchTerm, directorSearchTerm, actorSearchTerm]
-        // console.log('movie search: ' + movieSearchTerm)
-        // console.log('actor search: ' + actorSearchTerm)
-        // console.log('director search: ' + directorSearchTerm)
-        // console.log(sql);
     connection.query(sql, data, (error, results, fields) => {
         if (error) {
             return console.error('error: ' + error.message);
