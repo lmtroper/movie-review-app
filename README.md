@@ -5,7 +5,7 @@ Designed and developed a movie review web-application using **React**, **NodeJS*
 
 App Features | Description
 ------------- | -------------
-*Search for Movie Reviews* | Users can filter through movie reviews in the database based on a director, an actor/actress, and movie title. The filters can be applied one at a time or together. This information is queried from the MySQL database.
+*Search for Movie Reviews* | Users can filter through movie reviews in the database based on a director, an actor/actress, and movie title. The filters can be applied one at a time or together.
 *Submit Movie Review* | Users can select a movie, write a review, and provide a 1-5 rating to be stored in the database. Once submitted, the user is notified that the submission was successful and shows their submitted review.
 *View Movie Trailers* | For a selected list of movies, trailers are embedded from the Rottan Tomatoes Youtube channel. Users can search for a specific trailer or view all available trailers.
 
