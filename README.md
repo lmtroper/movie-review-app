@@ -19,4 +19,4 @@ The application queries data from an IMDB database. The tables and relationships
 #### Entity Relationship Diagram (EER) of the MySQL Database
 <img width="850" alt="Screen Shot 2023-01-20 at 4 27 39 PM" src="https://user-images.githubusercontent.com/72565412/213816794-5c9c0867-7209-491e-92b2-c82f2d2a53de.png">
 
-Application was created as a term project for course: *Databases and Software Design*.
+Application was created as a term project for *Databases and Software Design* course.
