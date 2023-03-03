@@ -16,7 +16,7 @@ https://user-images.githubusercontent.com/72565412/213815778-461415c9-2ee3-422a-
 <hr />
 The application queries data from an IMDB database. The tables and relationships added to the database for the above features were: user, review, and trailer.
 
-#### Entity Relationship Diagram (EER) of the MySQL Database
+#### Entity Relationship Diagram (ERD) of the MySQL Database
 <img width="850" alt="Screen Shot 2023-01-20 at 4 27 39 PM" src="https://user-images.githubusercontent.com/72565412/213816794-5c9c0867-7209-491e-92b2-c82f2d2a53de.png">
 
 Application was created as a term project for *Databases and Software Design* course.
